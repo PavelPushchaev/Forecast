@@ -1,0 +1,200 @@
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="js/mdb.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+  <style>
+  .close-first{
+    display: none;
+  }
+
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+  <div class="row">
+    <nav>
+        <div class="nav-wrapper">
+          <a href="index.html" class="brand-logo"><i class="large material-icons">insert_chart</i></a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="index.html">Перейти на главную страницу</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+      <div class="container">
+<h4 class=" center-align card-header text-center font-weight-bold text-uppercase py-4">О компании</h4>
+
+ 
+<p>
+    Основной хозяйственной деятельностью предприятия ООО «ТехРесурс» является оптовая торговля инструментами, расходными материалами, металлическими конструкциями.
+    Основная миссия компании - это реализация качественных материалов и инструментов на территории Оренбургской области.
+    Компания предоставляет широкий ассортимент высококачественных инструментов. <br>
+    Продукцией компании пользуются как физические, так и юридические лица
+   </p>
+
+    <h5>Контакты</h5>
+
+    Юридический адрес предприятия ООО «ТехРесурс» - Оренбургская область, г. Оренбург, переулок Станочный, д. 9.
+
+
+</div> 
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/mdb.min.js"></script>
+<script src="js/FileSaver.js"></script>
+<script lang="javascript" src="js/xlsx.full.min.js"></script>
+
+<script src=" https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+
+<script>var tableToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+      , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"> <meta charset="utf-8"> <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+      , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+      , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    return function(table, name) {
+      if (!table.nodeType) table = document.getElementById(table)
+      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      window.location.href = uri + base64(format(template, ctx))
+    }
+  })()
+  </script>
+
+
+<script>
+
+function downloadCSV(csv, filename) {
+    var csvFile;
+    var downloadLink;
+    csvFile = new Blob([csv], {type: "text/csv"});
+    downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+}
+function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("table tr");
+        for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+        
+        for (var j = 0; j < cols.length - 1; j++) {
+            row.push(cols[j].innerText);
+            
+            $("td:empty").remove();
+
+        }
+
+        csv.push(row.join(","));        
+    }
+    downloadCSV(csv.join("\n"), filename);
+}
+</script>
+<script>
+    const $tableID = $('#table');
+    const $BTN = $('#export-btn');
+    const $EXPORT = $('#export');
+  
+    const newTr = `
+   <tr class="hide">
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half">
+       <span class="table-up"><a href="#!" class="indigo-text"><i class="fas fa-long-arrow-alt-up" aria-hidden="true"></i></a></span>
+       <span class="table-down"><a href="#!" class="indigo-text"><i class="fas fa-long-arrow-alt-down" aria-hidden="true"></i></a></span>
+     </td>
+     <td>
+       <span class="table-remove"><button type="button" class="btn btn-danger btn-rounded btn-sm my-0 waves-effect waves-light">Remove</button></span>
+     </td>
+   </tr>`;
+  
+    $('.table-add').on('click', 'i', () => {
+  
+      const $clone = $tableID.find('tbody tr').last().clone(true).removeClass('hide table-line');
+  
+      if ($tableID.find('tbody tr').length === 0) {
+  
+        $('tbody').append(newTr);
+      }
+  
+      $tableID.find('table').append($clone);
+    });
+  
+    $tableID.on('click', '.table-remove', function () {
+  
+      $(this).parents('tr').detach();
+    });
+  
+    $tableID.on('click', '.table-up', function () {
+  
+      const $row = $(this).parents('tr');
+  
+      if ($row.index() === 1) {
+        return;
+      }
+  
+      $row.prev().before($row.get(0));
+    });
+  
+    $tableID.on('click', '.table-down', function () {
+  
+      const $row = $(this).parents('tr');
+      $row.next().after($row.get(0));
+    });
+  
+    // A few jQuery helpers for exporting only
+    jQuery.fn.pop = [].pop;
+    jQuery.fn.shift = [].shift;
+  
+    $BTN.on('click', () => {
+  
+      const $rows = $tableID.find('tr:not(:hidden)');
+      const headers = [];
+      const data = [];
+  
+      // Get the headers (add special header logic here)
+      $($rows.shift()).find('th:not(:empty)').each(function () {
+  
+        headers.push($(this).text().toLowerCase());
+      });
+  
+      // Turn all existing rows into a loopable array
+      $rows.each(function () {
+        const $td = $(this).find('td');
+        const h = {};
+  
+        // Use the headers from earlier to name our hash keys
+        headers.forEach((header, i) => {
+  
+          h[header] = $td.eq(i).text();
+        });
+  
+        data.push(h);
+      });
+  
+      // Output the result
+      $EXPORT.text(JSON.stringify(data));
+    });
+  </script>
+<script>
+var tableToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+      ,template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"> <meta charset="utf-8"> <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+      , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+      , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    return function(table, name) {
+      if (!table.nodeType) table = document.getElementById(table)
+      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      window.location.href = uri + base64(format(template, ctx))
+    }
+  })()
+  </script>
+
+</body>
+</html>

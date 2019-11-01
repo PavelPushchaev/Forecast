@@ -1,0 +1,224 @@
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <style>
+  .close-first{
+    display: none;
+  }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="index.html" class="brand-logo"><i class="large material-icons">insert_chart</i></a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="user_page.html">Работа с документами</a></li>
+              </ul>
+        </div>
+      </nav>
+      <div class="row">
+          <div class="input-field col" style="margin-top:5px;">
+              <button id="trainbutton" class="waves-effect waves-light btn red lighten-2" >Обучение</button>
+            </div>
+            <div class="file-field input-field col" style="margin-top:5px;">
+              <div class="btn blue lighten-2" style="height:36px; line-height:2.5rem">
+                <span>Выбрать CSV файл</span>
+                <input id="uploadcsv" type="file">
+              </div>
+            </div>
+      </div>
+<div class="row" style="padding-left:10px;padding-right:10px;cursor: pointer">
+  <ul class="collapsible" data-collapsible="accordion">
+    <li>
+      <div class="collapsible-header"><i class="material-icons" style="font-size:3rem">settings</i>
+        <div class="row" style="margin-bottom:10px;margin-top:10px">
+          <div class="col s3">
+            Настроить начальные параметры
+          </div>
+
+        </div>
+      </div>
+      <div class="collapsible-body"><span>
+        <div class="row center">
+          <div class="input-field col s12 m12 l12">
+            <h5>Настройки нейронной сети</h5>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="learningrate" type="number" value="0.001" class="validate tooltipped" data-position="bottom" data-delay="50" data-tooltip="Скорость обучения модели нейронной сети">
+            <label class="active">Скорость обучения</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="inputdropoutrate" type="number" value="0.9" class="validate tooltipped" data-position="bottom" data-delay="50" data-tooltip="Количество нейроннов, которые будут выпадать перед расчетом">
+            <label class="active">Входящие выпадающие значения</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="outputdropoutrate" type="number" value="0.9" class="validate tooltipped" data-position="bottom" data-delay="50" data-tooltip="Количество нейроннов, которые будут выпадать во время расчета">
+            <label class="active">Выходящие выпадающие значения</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="timestamp" type="number" class="validate tooltipped" value="5" data-position="bottom" data-delay="50" data-tooltip="Временные метки для расчета линии тренда">
+            <label class="active">Количество временных меток</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="sizelayer" type="number" class="validate tooltipped" value="64" data-position="bottom" data-delay="50" data-tooltip="Размер матрицы слоем для модели LSTM">
+            <label class="active">Размер слоя</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="epoch" type="number" class="validate tooltipped" value="1" data-position="bottom" data-delay="50" data-tooltip="Количество итераций, которые будет проводить система">
+            <label class="active">Количество итераций</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="future" type="number" class="validate tooltipped" value="10" data-position="bottom" data-delay="50" data-tooltip="Количество дней, на которые система будет делать прогноз">
+            <label class="active">Количество прогнозируемых дней</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="smooth" type="number" class="validate tooltipped" value="0.1" data-position="bottom" data-delay="50" data-tooltip="Веса, необходимые для расчета параметром экспоненциального сглаживания">
+            <label class="active">Веса для сглаживания</label>
+          </div>
+        </div>
+        <div class="row center">
+          <div class="input-field col s12 m12 l12" style="margin-left:5.33%">
+            <h5>Покупка и продажа</h5>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="initialmoney" type="number" value="10000" class="validate tooltipped" data-position="bottom" data-delay="50" data-tooltip="Начальный капитал для симуляции расчета">
+            <label class="active">Начальный капитал</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="maxbuy" type="number" value="5" class="validate tooltipped" data-position="bottom" data-delay="50" data-tooltip="Максимальное количество,которое можно купить">
+            <label class="active">Минимальная покупка (шт)</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="maxsell" type="number" class="validate tooltipped" value="10" data-position="bottom" data-delay="50" data-tooltip="Максимальное количество, которое можно продать">
+            <label class="active">Максимальная покупка (шт)</label>
+          </div>
+          <div class="input-field col s12 m12 l3">
+            <input id="history" type="number" class="validate tooltipped" value="5" data-position="bottom" data-delay="50" data-tooltip="Вспомогательное значение скользящего среднего для более точного прогнозирования">
+            <label class="active">Начальное значение скользящего среднего</label>
+          </div>
+        </div>
+      </span></div>
+    </li>
+  </ul>
+</div>
+
+
+
+<h3 class='header center light'>График изменения цен</h3>
+
+<div class="row" style="padding-left:10px;padding-right:10px">
+  <div class="col s12 m12">
+    <div id="div_output" style="height: 500px;"></div>
+  </div>
+</div>
+<br>
+<div class="row close-first" style="padding-left:10px;padding-right:10px">
+  <div class="col s12 m8">
+    <div id="div_dist" style="height: 450px;"></div>
+  </div>
+  <div class="col s12 m4">
+    <div class="row">
+      <div id="div_loss" style="height: 250px;"></div>
+    </div>
+    <div class="row" id="log" style="height: 150px; overflow:auto;">
+    </div>
+  </div>
+</div>
+<!--<button id="button-a" class="waves-effect waves-light btn red lighten-2"  onclick="tableToExcel('mytable', 'W3C Example Table')"><i class="material-icons right">assessment</i>
+  Сохранить файл в формате CSV</button>
+-->
+
+<div class="row">
+
+      <div class="file-field input-field col" style="margin-top:5px;">
+          <button class="btn waves-effect waves-light" type="submit" name="action"  onclick="tableToExcel('mytable', 'W3C Example Table')" >Сохранить результат вычислений
+              <i class="material-icons right">send</i>
+            </button>
+      </div>
+</div>
+
+
+
+
+
+<!--<input type="button" onclick="tableToExcel('mytable', 'W3C Example Table')" value="Export to Excel">-->
+
+
+<div class="row" style="padding-left:10px;padding-right:10px">
+  <ul class="collapsible" data-collapsible="accordion">
+    <li>
+      <div class="collapsible-header"><i class="material-icons">archive</i>Результаты анализа</div>
+      <div class="collapsible-body"><span>
+        <table class="bordered highlight" id="mytable">
+          <thead>
+            <tr>
+              <th>Дата</th>
+              <th>Действие</th>
+              <th>Цена</th>
+              <th>Инвестиции</th>
+              <th>Баланс</th>
+            </tr>
+          </thead>
+          <tbody id='table-body'>
+          </tbody>
+        </table><br>
+        <span id="log-invest"></span>
+      </span></div>
+    </li>
+  </ul>
+</div>
+<div class="row center" id="color-investment">
+</div>
+
+
+<script src="js/tf.js"></script>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/materialize.min.js"></script>
+<script src="js/d3.v3.min.js"></script>
+<script src="js/numeric-1.2.6.min.js"></script>
+<script src="js/numjs.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/echarts.min.js"></script>
+<script src="js/echarts-gl.min.js"></script>
+<script src="js/papaparse.min.js"></script>
+<script src="data/google.js"> </script>
+<script src="init.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-app.js"></script>
+
+<script src="js/FileSaver.js"></script>
+
+<script>
+  var wb = XLSX.utils.table_to_book(document.getElementById('mytable'), {sheet:"Sheet JS"});
+  var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+  function s2ab(s) {
+                  var buf = new ArrayBuffer(s.length);
+                  var view = new Uint8Array(buf);
+                  for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+                  return buf;
+  }
+  $("#button-a").click(function(){
+  saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'test.xlsx');
+  });
+</script>
+
+<script>var tableToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+      , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"> <meta charset="utf-8"> <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+      , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+      , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    return function(table, name) {
+      if (!table.nodeType) table = document.getElementById(table)
+      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      window.location.href = uri + base64(format(template, ctx))
+    }
+  })()
+
+
+  </script>
+</body>
+</html>

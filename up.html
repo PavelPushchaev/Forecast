@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Import csv file with jquery</title>
+        <meta charset="utf-8" />
+        <style>
+            #container,#buttondiv{
+                margin:0 auto;
+                width:80%;
+                overflow:auto;
+            }
+            table.gridtable {
+                margin:0 auto;
+                width:95%;
+                overflow:auto;
+                font-family: helvetica,arial,sans-serif;
+                font-size:14px;
+                color:#333333;
+                border-width: 1px;
+                border-color: #666666;
+                border-collapse: collapse;
+                text-align: center;
+            }
+            table.gridtable th {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #666666;
+                background-color: #F6B4A5;
+            }
+            table.gridtable td {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #666666;
+            }
+            .badrowcount {
+              background-color: coral;
+            }
+            .notnumeric {
+              background-color: yellow;
+            }
+        </style>
+    </head>
+
+    <body>
+            <script type="text/javascript">
+                function Upload() {
+                    var fileUpload = document.getElementById("fileUpload");
+                    var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+                    if (regex.test(fileUpload.value.toLowerCase())) {
+                        if (typeof (FileReader) != "undefined") {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                var table = document.createElement("table");
+                                var rows = e.target.result.split("\n");
+                                for (var i = 0; i < rows.length; i++) {
+                                    var cells = rows[i].split(",");
+                                    if (cells.length > 1) {
+                                        var row = table.insertRow(-1);
+                                        for (var j = 0; j < cells.length; j++) {
+                                            var cell = row.insertCell(-1);
+                                            cell.innerHTML = cells[j];
+                                        }
+                                    }
+                                }
+                                var dvCSV = document.getElementById("dvCSV");
+                                dvCSV.innerHTML = "";
+                                dvCSV.appendChild(table);
+                                table.classList.add('mytable')
+                                
+                            }
+                            reader.readAsText(fileUpload.files[0]);
+                        } else {
+                            alert("This browser does not support HTML5.");
+                        }
+                    } else {
+                        alert("Please upload a valid CSV file.");
+                    }
+                }
+            </script>
+            <input type="file" id="fileUpload" />
+            <input type="button" id="upload" value="Upload" onclick="Upload()" />
+            <hr />
+            <div id="dvCSV">
+            </div>
+    </body>
+</html>

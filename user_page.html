@@ -1,0 +1,478 @@
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="js/mdb.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+  <style>
+  .close-first{
+    display: none;
+  }
+  .NoneBorders {
+    border: none
+  }
+
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+  <div class="row">
+    <nav>
+        <div class="nav-wrapper">
+          <a href="index.html" class="brand-logo"><i class="large material-icons">insert_chart</i></a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="index.html">Перейти на главную страницу</a></li>
+          </ul>
+        </div>
+      </nav>
+<!-- Editable table -->
+<h4 class=" center-align card-header text-center font-weight-bold text-uppercase py-4">Данные по продажам</h4>
+<hr>
+
+    <form action="#">
+        <div class="file-field input-field">
+          <div class="btn" style="padding-top: 0px;">
+            <span style=" color:white " >Выберите файл</span>
+            <input type="file" id="fileUpload"/>
+          </div>
+          <div class="file-path-wrapper">
+              <a class="waves-effect waves-light btn" id="upload" onclick="Upload()"  style="padding-top: 0px;"><i class="material-icons right">cloud</i>Загрузить документ</a>
+            </div>
+        </div>
+      </form>
+
+ 
+<span class="table-add float-right mb-3 mr-2"><a href="#!" class=""><i class="medium material-icons">add <span style=" font-family: roboto; font-size: 14; padding-top: 0;vertical-align: super;"> Добавить строку</span></i></a></span>                      
+
+<div class="row">
+<div class="card">
+    <div class="card-body">
+      <div id="table" class="table-editable">
+          <table class="table table-bordered table-responsive-md table-striped text-center bordered centered" id="mytable">
+          <thead>
+            <tr>
+              <th class="text-center">Date</th>
+              <th class="text-center">Open</th>
+              <th class="text-center">High</th>
+              <th class="text-center">Low</th>
+              <th class="text-center">Close</th>
+              <th class="text-center">Adj Close</th>
+              <th class="text-center">Volume</th>
+              <th class="text-center">Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <td class="pt-3-half" contenteditable="true"></td>
+                  <td class="pt-3-half" contenteditable="true"></td>
+                  <td class="pt-3-half" contenteditable="true"></td>
+                  <td class="pt-3-half" contenteditable="true"></td>
+                  <td class="pt-3-half" contenteditable="true"></td>
+                  <td class="pt-3-half" contenteditable="true"></td>
+                  <td class="pt-3-half" contenteditable="true"></td>
+                  <td>
+                    <span class="table-remove"><button type="button"
+                        class="btn btn-danger btn-rounded btn-sm my-0"  style="padding-top:0">Удалить</button></span>
+                  </td>
+                </tr>
+                    <tr class="hide">
+                        <td class="pt-3-half" contenteditable="true"></td>
+                        <td class="pt-3-half" contenteditable="true"></td>
+                        <td class="pt-3-half" contenteditable="true"></td>
+                        <td class="pt-3-half" contenteditable="true"></td>
+                        <td class="pt-3-half" contenteditable="true"></td>
+                        <td class="pt-3-half" contenteditable="true"></td>
+                        <td class="pt-3-half" contenteditable="true"></td>
+                        <td>
+                          <span class="table-remove"><button type="button"
+                              class="btn btn-danger btn-rounded btn-sm my-0"  style="padding-top:0">Удалить</button></span>
+                        </td>
+                      </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+    </div>
+  <a class="waves-effect waves-light btn" onclick="exportTableToCSV('stocks.csv')" style="padding-top:0">
+    <i class="material-icons right">assessment</i>
+    Сохранить файл в формате CSV
+  </a>
+
+
+</div> 
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/mdb.min.js"></script>
+<script src="js/FileSaver.js"></script>
+<script lang="javascript" src="js/xlsx.full.min.js"></script>
+
+<script src=" js/materialize.min.js"></script>
+
+
+
+
+<script type="text/javascript">
+
+function createCell(cell, text, style) {
+    var div = document.createElement('div'), // create DIV element
+        txt = document.createTextNode(text); // create text node
+    div.appendChild(txt);                    // append text node to the DIV
+    div.setAttribute('class', style);        // set DIV class attribute
+    div.setAttribute('className', style);    // set DIV class attribute for IE (?!)
+    cell.appendChild(div);                   // append DIV to the table cell
+}
+
+
+
+  function Upload() {
+
+    const RemoveCol = `     <td>
+       <span class="table-remove"><button type="button" class="btn btn-danger btn-rounded btn-sm my-0 waves-effect waves-light"   style="padding-top:0">Remove</button></span>
+     </td>`;
+
+
+    //  replace(/\s/g, '')
+
+      var fileUpload = document.getElementById("fileUpload");
+      var regex = /^([а-яА-Яa-zA-Z0-9_\\.\-:])+(.csv|.txt)$/;
+      if (regex.test(fileUpload.value.toLowerCase())) {
+          if (typeof (FileReader) != "undefined") {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                  var table = document.createElement("table");
+                  var rows = e.target.result.split("\n");
+                  for (var i = 0; i < rows.length; i++) {
+                      var cells = rows[i].split(",");
+                      if (cells.length > 1) {
+                          var row = table.insertRow(-1);
+                          for (var j = 0; j < cells.length; j++) {
+                              var cell = row.insertCell(-1);
+                              cell.innerHTML = cells[j];
+                          }
+                      }
+                  }
+
+                  var dvCSV = document.getElementById("table");
+                  dvCSV.innerHTML = "";
+                  dvCSV.id = 'table';
+                  dvCSV.classList.add('table-editable');
+                  dvCSV.appendChild(table);
+                  table.classList.add('table', 'table-bordered', 'table-responsive-md', 'table-striped' ,'text-center','bordered','centered')
+                  table.id = 'mytable';
+                  var tbl = document.getElementById('mytable'), // table reference
+                   i;
+
+                    $('#mytable tbody tr:first-child() td').parent().append(`<td>Удалить</td>`);
+
+                    $('#mytable tbody tr td:last-child()').not(':first').parent().append(RemoveCol);
+                  var tds = document.querySelectorAll('table td');
+                  var i = 0;
+
+
+                  for(var td in tds){
+                      tds[td].setAttribute('contenteditable',true);
+                     
+                      //tds[td].id=(i++).toString();
+                  };
+
+
+                 // table.find('td').setAttribute(contenteditable, true)
+
+                iter += 1;
+                  
+              }
+              reader.readAsText(fileUpload.files[0]);
+          } else {
+            Materialize.toast('К сожалению, ваш браузер не поддерживает HTML5', 4000)
+          }
+      } else {
+        Materialize.toast('Произошла ошибка, пожалуйста попробуйте снова', 4000)
+      }
+  
+      const $tableID = $('#mytable');
+    const $BTN = $('#export-btn');
+    const $EXPORT = $('#export');
+  
+    const newTr = `
+   <tr class="hide">
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half">
+       <span class="table-up"><a href="#!" class="indigo-text"><i class="fas fa-long-arrow-alt-up" aria-hidden="true"></i></a></span>
+       <span class="table-down"><a href="#!" class="indigo-text"><i class="fas fa-long-arrow-alt-down" aria-hidden="true"></i></a></span>
+     </td>
+     <td>
+       <span class="table-remove"><button type="button" class="btn btn-danger btn-rounded btn-sm my-0 waves-effect waves-light">Удалить</button></span>
+     </td>
+   </tr>`;
+  
+    $('.table-add').on('click', 'i', () => {
+  
+      const $clone = $tableID.find('tbody tr').last().clone(true).removeClass('hide table-line');
+  
+      const $2clone = `
+      <tr>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td>
+                    <span class="table-remove"><button type="button"
+                        class="btn btn-danger btn-rounded btn-sm my-0"  style="padding-top:0">Удалить</button></span>
+                  </td>
+                </tr>`
+
+
+
+      if ($tableID.find('tbody tr').length === 0) {
+  
+        $('tbody').append(newTr);
+      }
+  
+      $tableID.find('tbody').append($2clone);
+    });
+  
+    $tableID.on('click', '.table-remove', function () {
+  
+      $(this).parents('tr').detach();
+    });
+  
+    $tableID.on('click', '.table-up', function () {
+  
+      const $row = $(this).parents('tr');
+  
+      if ($row.index() === 1) {
+        return;
+      }
+  
+      $row.prev().before($row.get(0));
+    });
+  
+    $tableID.on('click', '.table-down', function () {
+  
+      const $row = $(this).parents('tr');
+      $row.next().after($row.get(0));
+    });
+  
+    // A few jQuery helpers for exporting only
+    jQuery.fn.pop = [].pop;
+    jQuery.fn.shift = [].shift;
+  
+    $BTN.on('click', () => {
+  
+      const $rows = $tableID.find('tr:not(:hidden)');
+      const headers = [];
+      const data = [];
+  
+      // Get the headers (add special header logic here)
+      $($rows.shift()).find('th:not(:empty)').each(function () {
+  
+        headers.push($(this).text().toLowerCase());
+      });
+  
+      // Turn all existing rows into a loopable array
+      $rows.each(function () {
+        const $td = $(this).find('td');
+        const h = {};
+  
+        // Use the headers from earlier to name our hash keys
+        headers.forEach((header, i) => {
+  
+          h[header] = $td.eq(i).text();
+        });
+  
+        data.push(h);
+      });
+  
+      // Output the result
+      $EXPORT.text(JSON.stringify(data));
+    });
+
+
+
+
+
+  }
+</script>
+
+<script>var tableToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+      , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"> <meta charset="utf-8"> <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+      , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+      , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    return function(table, name) {
+      if (!table.nodeType) table = document.getElementById(table)
+      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      window.location.href = uri + base64(format(template, ctx))
+    }
+  })()
+  </script>
+
+
+<script>
+
+function downloadCSV(csv, filename) {
+    var csvFile;
+    var downloadLink;
+    csvFile = new Blob([csv], {type: "text/csv"});
+    downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+}
+function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("table tr");
+        for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+        
+        for (var j = 0; j < cols.length - 1; j++) {
+            row.push(cols[j].innerText);
+            
+          //  $("td:empty").remove();
+          $("td:empty").append = 0
+
+
+        }
+
+        csv.push(row.join(","));        
+    }
+    downloadCSV(csv.join("\n"), filename);
+}
+</script>
+<script>
+    const $tableID = $('#table');
+    const $BTN = $('#export-btn');
+    const $EXPORT = $('#export');
+  
+    const newTr = `
+   <tr class="hide">
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half" contenteditable="true">Example</td>
+     <td class="pt-3-half">
+       <span class="table-up"><a href="#!" class="indigo-text"><i class="fas fa-long-arrow-alt-up" aria-hidden="true"></i></a></span>
+       <span class="table-down"><a href="#!" class="indigo-text"><i class="fas fa-long-arrow-alt-down" aria-hidden="true"></i></a></span>
+     </td>
+     <td>
+       <span class="table-remove"><button type="button" class="btn btn-danger btn-rounded btn-sm my-0 waves-effect waves-light">Remove</button></span>
+     </td>
+   </tr>`;
+  
+    $('.table-add').on('click', 'i', () => {
+  
+      const $2clone = `
+      <tr>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td contenteditable="true"></td>
+                  <td>
+                    <span class="table-remove"><button type="button"
+                        class="btn btn-danger btn-rounded btn-sm my-0"  style="padding-top:0">Удалить</button></span>
+                  </td>
+                </tr>`
+
+
+
+      const $clone = $tableID.find('tbody tr').last().clone(true).removeClass('hide table-line');
+  
+      if ($tableID.find('tbody tr').length === 0) {
+  
+        $('tbody').append(newTr);
+      }
+  
+      $tableID.find('tbody').append($2clone);
+    });
+  
+    $tableID.on('click', '.table-remove', function () {
+  
+      $(this).parents('tr').detach();
+    });
+  
+    $tableID.on('click', '.table-up', function () {
+  
+      const $row = $(this).parents('tr');
+  
+      if ($row.index() === 1) {
+        return;
+      }
+  
+      $row.prev().before($row.get(0));
+    });
+  
+    $tableID.on('click', '.table-down', function () {
+  
+      const $row = $(this).parents('tr');
+      $row.next().after($row.get(0));
+    });
+  
+    // A few jQuery helpers for exporting only
+    jQuery.fn.pop = [].pop;
+    jQuery.fn.shift = [].shift;
+  
+    $BTN.on('click', () => {
+  
+      const $rows = $tableID.find('tr:not(:hidden)');
+      const headers = [];
+      const data = [];
+  
+      // Get the headers (add special header logic here)
+      $($rows.shift()).find('th:not(:empty)').each(function () {
+  
+        headers.push($(this).text().toLowerCase());
+      });
+  
+      // Turn all existing rows into a loopable array
+      $rows.each(function () {
+        const $td = $(this).find('td');
+        const h = {};
+  
+        // Use the headers from earlier to name our hash keys
+        headers.forEach((header, i) => {
+  
+          h[header] = $td.eq(i).text();
+        });
+  
+        data.push(h);
+      });
+  
+      // Output the result
+      $EXPORT.text(JSON.stringify(data));
+    });
+  </script>
+<script>
+var tableToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+      ,template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"> <meta charset="utf-8"> <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+      , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+      , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    return function(table, name) {
+      if (!table.nodeType) table = document.getElementById(table)
+      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      window.location.href = uri + base64(format(template, ctx))
+    }
+  })()
+
+
+
+  $('input#input_text, textarea#textarea2').characterCounter();
+
+  </script>
+
+</body>
+</html>
